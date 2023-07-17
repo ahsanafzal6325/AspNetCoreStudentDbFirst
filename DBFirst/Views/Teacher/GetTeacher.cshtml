@@ -1,0 +1,44 @@
+﻿@model DATA.Models.Teacher
+
+<div class="row">
+    <div class="col-md-4">
+        <form id="Teachform">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="TeacherId" />
+            <div class="form-group">
+                <label asp-for="TName" class="control-label"></label>
+                <input asp-for="TName" class="form-control" />
+                <span asp-validation-for="TName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TContact" class="control-label"></label>
+                <input asp-for="TContact" class="form-control" />
+                <span asp-validation-for="TContact" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" id="btnSave" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $("#btnSave").click(function () {
+        $.ajax({
+            type: "POST",
+            url: "/Teacher/AjCreate",
+            data: $('#Teachform').serialize(),
+            success: function (response) {
+                $("#teachform").html(response);
+            },
+            error: function (error) {
+                alert(error);
+            }
+        });
+      
+    });
+
+
+
+
+</script>

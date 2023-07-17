@@ -1,0 +1,106 @@
+﻿@model IEnumerable<DATA.Models.Department>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/sweetalert/sweetalert.css" rel="stylesheet" />
+<script src="~/sweetalert/sweetalert.min.js"></script>
+<h2 class="text-center">All Departments</h2>
+
+<p>
+    <button type="button" class="btn btn-primary" onclick="openCreateModal()">
+        Add New Department
+    </button>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+
+<!--MODEL FOR CREATE Department-->
+
+<div class="modal fade" id="addDeptModal" tabindex="-1" role="dialog" aria-labelledby="addStudentModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addStudentModalLabel">Add New Department</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Partial view content will be loaded here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" onclick="location.reload()">Reload</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="submitCreateForm()">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    function openCreateModal() {
+        $.ajax({
+            url: '/Department/Create',
+            type: 'GET',
+            success: function (response) {
+                $('#addDeptModal .modal-body').html(response);
+                $('#addDeptModal').modal('show');
+            },
+            error: function (xhr, status, error) {
+                // Handle error if necessary
+                console.log(error);
+            }
+        });
+    }
+    function submitCreateForm() {
+
+        if (document.getElementById("DepName").value == "" || document.getElementById("DepName").value == null || document.getElementById("DepName").value == undefined) {
+
+            swal("Required", "Please Enter Department Name", "error");
+            return;
+        }
+
+        var depName = $("#DepName");
+        console.log(depName);
+        var formData = $('#createDeptForm').serialize();  // Serialize the form data
+
+        $.ajax({
+            url: '/Department/Create',
+            type: 'POST',
+            data: formData,
+            success: function (response) {
+                // Handle success logic here
+                $('#addDeptModal').modal('hide');
+                location.reload();  // Optionally, you can refresh the page or update the student list after successfully adding a new student
+            },
+            error: function (xhr, status, error) {
+                // Handle error if necessary
+                console.log(error);
+            }
+        });
+    }
+
+</script>

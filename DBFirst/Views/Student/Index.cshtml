@@ -1,0 +1,313 @@
+﻿@*@model PaginatedStudentViewModel*@
+@model List<DBFirst.Models.StudentVM>
+
+@if (!string.IsNullOrEmpty(ViewBag.EmployeeDeletedMessage))
+{
+    <div class="alert alert-success">
+        @ViewBag.EmployeeDeletedMessage
+    </div>
+}
+<link href="~/sweetalert/sweetalert.css" rel="stylesheet" />
+<script src="~/sweetalert/sweetalert.min.js"></script>
+
+<!-- Navigation -->
+<section id="card-navigation">
+    <h3 class="mb-2 text-center">All Students</h3>
+    <div class="row">
+        <div class="col-md-12">
+            @*<p><a href="/Student/Create" class="btn btn-primary">Create New</a></p>*@
+            <button type="button" class="btn btn-primary" onclick="openCreateModal()">
+                Add New Student
+            </button>
+            @*<form action="/Student/Index" method="post">
+                    <div class="mb-3">
+                        <label asp-for="DepID">Departments:</label>
+                        @Html.DropDownListFor(x => x.DepID, new SelectList(ViewBag.Departments, "Value", "Text"), "-- Select Department --", new { @class = "form-control", id = "department", required = "required" })
+                        <span asp-validation-for="DepID" class="text-danger"></span>
+                    </div>
+                    <button type="submit">Submit</button>
+                </form>*@
+
+
+            <table class="table" style="margin-top:10px;">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Department Name</th>
+                        <th>Subjects Name</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int x = 0;
+                        @foreach (var stud in Model)
+                        {
+                            x++;
+                            <tr>
+                                <td>@x</td>
+                                <td>@stud.stud.Name</td>
+                                <td>@stud.stud.Email</td>
+                                <td>@stud.dep.Name</td>
+                                <td>
+
+                                    @foreach (var item in stud.Subjects)
+                                    {
+                                        <span class="btn btn-info btn-sm">&nbsp; @item.SubName &nbsp;</span>
+                                    }
+
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-warning" onclick="openEditModal(@stud.stud.Id)">
+                                        Edit Student
+                                    </button>
+                                    <button type="button" class="btn btn-danger" onclick="showDeleteConfirmation(@stud.stud.Id)">Delete</button>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+<!--/ Navigation -->
+<form action="/Student/Index" method="post">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <select name="DepId" id="department" class="form-control">
+                    <option value="">--Search Department--</option>
+                    @foreach (var department in ViewBag.Departments)
+                    {
+                        <option value="@department.Value">@department.Text</option>
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <select name="SubId" id="subjects" class="form-control">
+                    <option value="">--Search Subjects--</option>
+                    @foreach (var sub in ViewBag.Subjects)
+                    {
+                        <option value="@sub.Value">@sub.Text</option>
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+
+<!--MODEL FOR CREATE STUDENT-->
+
+<div class="modal fade" id="addStudentModal" tabindex="-1" role="dialog" aria-labelledby="addStudentModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addStudentModalLabel">Add New Student</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Partial view content will be loaded here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" onclick="location.reload()">Reload</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="submitCreateForm()">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--MODEL FOR EDIT STUDENT-->
+<div class="modal fade" id="editStudentModal" tabindex="-1" role="dialog" aria-labelledby="editStudentModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editStudentModalLabel">Edit Student</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Partial view content will be loaded here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="submitEditForm()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--MODEL FOR DELETE-->
+<div class="modal fade" id="deleteConfirmationModal" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
+    @await Html.PartialAsync("_DeleteConfirmation")
+</div>
+<script>
+    function openCreateModal() {
+        $.ajax({
+            url: '/Student/Create',
+            type: 'GET',
+            success: function (response) {
+                $('#addStudentModal .modal-body').html(response);
+                $('#addStudentModal').modal('show');
+            },
+            error: function (xhr, status, error) {
+                // Handle error if necessary
+                console.log(error);
+            }
+        });
+    }
+    function submitCreateForm() {
+        var name;
+        var email
+        var dep;
+        var sub;
+        if (document.getElementById("name").value == "" || document.getElementById("name").value == null || document.getElementById("name").value == undefined) {
+            console.log("The 'name' element does not contain 'someValue'.");
+            name = 'Name';
+        } else {
+            console.log("The 'name' element contains 'someValue'.");
+            name = '';
+        }
+        if (document.getElementById("Email").value == "" || document.getElementById("Email").value == null || document.getElementById("Email").value == undefined) {
+            console.log("The 'Email' element does not contain 'someValue'.");
+            email = 'Email';
+        } else {
+            console.log("The 'Email' element contains 'someValue'.");
+            email = '';
+        }
+        if (document.getElementById("department").value == "" || document.getElementById("department").value == null || document.getElementById("department").value == undefined) {
+            console.log("The 'department' element does not contain 'someValue'.");
+            dep = 'Department';
+        } else {
+            console.log("The 'department' element contains 'someValue'.");
+            dep = '';
+        }
+        if (document.getElementById("selectedSubjects").value == "" || document.getElementById("selectedSubjects").value == null || document.getElementById("selectedSubjects").value == undefined) {
+            console.log("The 'Subject' element does not contain 'someValue'.");
+            sub = 'Subject';
+        } else {
+            console.log("The 'Subject' element contains 'someValue'.");
+            sub = '';
+        }
+        if ((document.getElementById("name").value == "" || document.getElementById("name").value == null || document.getElementById("name").value == undefined)
+            || (document.getElementById("Email").value == "" || document.getElementById("Email").value == null || document.getElementById("Email").value == undefined)
+            || (document.getElementById("department").value == "" || document.getElementById("department").value == null || document.getElementById("department").value == undefined)
+            || (document.getElementById("selectedSubjects").value == "" || document.getElementById("selectedSubjects").value == null || document.getElementById("selectedSubjects").value == undefined)) {
+            swal("Required", "Please Enter " + name + " " + email + " " + " " + dep + " " + sub, "error");
+            return;
+        }
+        //if (document.getElementById("name").value == "" || document.getElementById("name").value == null || document.getElementById("name").value == undefined) {
+        //    swal("Required", "Please Enter Name", "error");
+        //    return;
+        //}
+        //if (document.getElementById("Email").value == "" || document.getElementById("Email").value == null || document.getElementById("Email").value == undefined) {
+
+        //    swal("Required", "Please Enter Email", "error");
+        //    return;
+        //}
+
+        //if (document.getElementById("department").value == "" || document.getElementById("department").value == null || document.getElementById("department").value == undefined) {
+
+        //    swal("Required", "Please Select Department", "error");
+        //    return;
+        //}
+
+        //if (document.getElementById("selectedSubjects").value == "" || document.getElementById("selectedSubjects").value == null || document.getElementById("selectedSubjects").value == undefined) {
+
+        //    swal("Required", "Please Select Subject", "error");
+        //    return;
+        //}
+
+        var formData = $('#createStudentForm').serialize();
+
+
+        // Serialize the form data
+
+        $.ajax({
+            url: '/Student/Create',
+            type: 'POST',
+            data: formData,
+            success: function (response) {
+                // Handle success logic here
+                $('#addStudentModal').modal('hide');
+                location.reload();  // Optionally, you can refresh the page or update the student list after successfully adding a new student
+            },
+            error: function (xhr, status, error) {
+                // Handle error if necessary
+                console.log(error);
+            }
+        });
+    }
+    function openEditModal(studentId) {
+        $.ajax({
+            url: '/Student/Edit',
+            type: 'GET',
+            data: { id: studentId },
+            success: function (response) {
+                $('#editStudentModal .modal-body').html(response);
+                $('#editStudentModal').modal('show');
+            },
+            error: function (xhr, status, error) {
+                // Handle error if necessary
+                console.log(error);
+            }
+        });
+    }
+    function submitEditForm() {
+        var formData = $('#editStudentForm').serialize();  // Serialize the form data
+
+        $.ajax({
+            url: '/Student/Edit',
+            type: 'POST',
+            data: formData,
+            success: function (response) {
+                // Handle success logic here
+                $('#editStudentModal').modal('hide');
+                location.reload();  // Optionally, you can refresh the page or update the student list after successfully editing a student
+            },
+            error: function (xhr, status, error) {
+                // Handle error if necessary
+                console.log(error);
+            }
+        });
+    }
+
+    var deleteStudentId;
+    function showDeleteConfirmation(studentId) {
+        deleteStudentId = studentId;
+        $('#deleteConfirmationModal').modal('show');
+    }
+
+    // Delete action
+    function deleteStudent() {
+        $.ajax({
+            url: '/Student/Delete/' + deleteStudentId,
+            type: 'POST',
+            success: function (response) {
+                // Handle success logic here
+                $('#deleteConfirmationModal').modal('hide');
+                location.reload(); // Optionally, you can refresh the page or update the student list after deleting a student
+            },
+            error: function (xhr, status, error) {
+                // Handle error if necessary
+                console.log(error);
+            }
+        });
+    }
+
+
+</script>

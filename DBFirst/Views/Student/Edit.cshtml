@@ -1,0 +1,37 @@
+﻿@model DBFirst.Models.UpdateStudentVM
+
+
+<h2 class="text-center">Edit Student</h2>
+
+<form method="post" action="Edit">
+    <div class="mb-3">
+        <label for="" class="form-label">ID</label>
+        <input type="text" class="form-control" asp-for="Id" readonly="readonly">
+    </div>
+    <div class="mb-3">
+        <label for="" class="form-label">Name</label>
+        <input type="text" class="form-control" asp-for="Name">
+    </div>
+    <div class="mb-3">
+        <label for="" class="form-label">Email</label>
+        <input type="email" class="form-control" asp-for="Email">
+    </div>
+    <div class="mb-3">
+        <label asp-for="DepID">Departments:</label>
+        @Html.DropDownListFor(x => x.DepID, new SelectList(ViewBag.Departments, "Value", "Text"), "-- Select Department --", new { @class = "form-control" })
+        <span asp-validation-for="DepID" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="SelectedSubjects">Subjects</label>
+        <select asp-for="SelectedSubjects" class="form-control select2" asp-items="ViewBag.Subjects" multiple="multiple"></select>
+        <span asp-validation-for="SelectedSubjects" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form> 
+<script>
+    $(document).ready(function () {
+
+
+        $('.select2').select2();
+    });
+</script>

@@ -1,0 +1,45 @@
+﻿@model IEnumerable<DATA.Models.Teacher>
+
+@{
+    ViewData["Title"] = "AjIndex";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>All Teachers</h1>
+
+<div id="teachform">
+
+</div>
+
+<div id="teachlist">
+
+</div>
+
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    debugger;
+    $(document).ready(function () {
+        $.ajax({
+            type: "GET",
+            url: "/Teacher/GetTeacher",
+            success: function (response) {
+                $("#teachform").html(response)
+            },
+            error: function (error) {
+                alert(error);
+            }
+        });
+        $.ajax({
+            type: "GET",
+            url: "/Teacher/GetTeacherList",
+            success: function (response) {
+                $("#teachlist").html(response);
+            },
+            error: function (error) {
+                alert(error);
+            }
+        });
+    });
+</script>

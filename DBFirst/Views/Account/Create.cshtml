@@ -1,0 +1,91 @@
+﻿@model DBFirst.Models.LoginVM;
+@{
+    ViewBag.Title = "SignUp";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+
+<section class="container-fluid bg">
+    <section class="row justify-content-center">
+        <div class="col-12 col-sm-6 col-md-3 col-lg-4 FormDesign">
+            @using (Html.BeginForm("Create", "Account", FormMethod.Post))
+            {
+            <form class="">
+                <h1 class="text-center text-dark lead" style="font-size:40px;">Sign Up</h1>
+                <div class="form-group">
+                    <label for="exampleInputEmail1">User Name</label>
+                    <input type="text" class="form-control" name="Email" placeholder="Enter email">
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputPassword1">Password</label>
+                    <input type="password" class="form-control" name="PassWord" id="password" placeholder="Password">
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputPassword1">Password</label>
+                    <input type="password" class="form-control" name="ConPassword" id="confirmPassword" placeholder="Confirm Password">
+                    <span id="passwordMatchError" class="text-danger"></span>
+                </div>
+                <div class="custom-control custom-checkbox form-group">
+                    <input type="checkbox" class="custom-control-input" id="KeepLoggedIn" name="KeepLoggedIn">
+                    <label for="rememberMe" class="custom-control-label">Remember me</label>
+                </div>
+                <button type="submit" class="btn btn-block btn-primary mt-2">SignUp</button>
+                <a href="/Account/Login" class="text-center d-block mx-auto" style="font-size:13px;margin-top:5px;">Back to login</a>
+
+            </form>
+            }
+        </div>
+    </section>
+</section>
+
+<script>
+
+    // Add JavaScript validation to check if password and confirm password match on form submit
+    document.addEventListener("DOMContentLoaded", function () {
+        var password = document.getElementById("password");
+        var confirmPassword = document.getElementById("confirmPassword");
+        var passwordMatchError = document.getElementById("passwordMatchError");
+        var submitButton = document.querySelector("button[type='submit']");
+
+        submitButton.addEventListener("click", function (event) {
+            if (password.value !== confirmPassword.value) {
+                passwordMatchError.textContent = "Passwords do not match.";
+                event.preventDefault(); // Prevent form submission
+            } else {
+                passwordMatchError.textContent = "";
+            }
+        });
+    });
+
+    //function validatPass(event) {
+    //    var password = document.getElementById("password");
+    //    var confirmpassword = document.getElementById("confirmPassword");
+    //    var passwordMatchError = document.getElementById("passwordMatchError");
+
+    //    confirmpassword.addEventListener("input", function () {
+    //        if (password.value != confirmpassword.value) {
+    //            passwordMatchError.textContent = "Password do not match";
+    //        }
+    //        else {
+    //            passwordMatchError.textContent = "";
+    //        }
+    //}
+
+    //document.addEventListener("DOMContentLoaded", function () {
+    //    var password = document.getElementById("password");
+    //    var confirmpassword = document.getElementById("confirmPassword");
+    //    var passwordMatchError = document.getElementById("passwordMatchError");
+
+    //    confirmpassword.addEventListener("input", function () {
+    //        if (password.value != confirmpassword.value) {
+    //            passwordMatchError.textContent = "Password do not match";
+    //        }
+    //        else {
+    //            passwordMatchError.textContent = "";
+    //        }
+    //    })
+
+    //})
+    
+
+</script>
