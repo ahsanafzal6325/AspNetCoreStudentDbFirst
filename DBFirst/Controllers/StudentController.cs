@@ -15,7 +15,7 @@ namespace DBFirst.Controllers
     public class StudentController : Controller
     {
         FinalDBCotext db = new FinalDBCotext();
-        public IActionResult Index(int? page,int DepId,int SubId)
+        public IActionResult Index(int? page,int? DepId,int? SubId)
         {
             int pageNumber = page ?? 1;
             int pageSize = 7;
@@ -65,7 +65,7 @@ namespace DBFirst.Controllers
                               
                               (DepId == 0 || s.DepID == DepId || DepId == null)
                               
-                              && (SubId==null || (liststudent == null?true: (liststudent.Count==0?true:liststudent.Any(x=>x==s.Id))))
+                              && (liststudent.Count==0 ? true : liststudent.Any(x=>x==s.Id))
                               )
 
 

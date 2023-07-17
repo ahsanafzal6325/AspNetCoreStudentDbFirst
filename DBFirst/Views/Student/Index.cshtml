@@ -78,24 +78,27 @@
     <div class="row">
         <div class="col-md-4">
             <div class="form-group">
-                <select name="DepId" id="department" class="form-control">
-                    <option value="">--Search Department--</option>
-                    @foreach (var department in ViewBag.Departments)
-                    {
-                        <option value="@department.Value">@department.Text</option>
-                    }
-                </select>
+                @*<select name="DepId" id="department" class="form-control">
+            <option value="">--Search Department--</option>
+            @foreach (var department in ViewBag.Departments)
+            {
+                <option value="@department.Value">@department.Text</option>
+            }
+        </select>*@
+                    @Html.DropDownList("DepId", ViewBag.Departments as SelectList, "Select Departments", new { @class = "form-control input-sm" })
+                </div>
             </div>
-        </div>
         <div class="col-md-4">
             <div class="form-group">
-                <select name="SubId" id="subjects" class="form-control">
-                    <option value="">--Search Subjects--</option>
-                    @foreach (var sub in ViewBag.Subjects)
-                    {
-                        <option value="@sub.Value">@sub.Text</option>
-                    }
-                </select>
+                @*<select name="SubId" id="subjects" class="form-control">
+            <option value="">--Search Subjects--</option>
+            @foreach (var sub in ViewBag.Subjects)
+            {
+                <option value="@sub.Value">@sub.Text</option>
+            }
+        </select>*@
+                @Html.DropDownList("SubId", ViewBag.Subjects as SelectList, "Select Subjects", new { @class = "form-control input-sm" })
+
             </div>
         </div>
         <div class="col-md-4">
